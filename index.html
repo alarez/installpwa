@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,34 +9,24 @@
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#1976d2" />
   <link rel="icon" href="icon-192.png" />
-
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      margin-top: 50px;
-    }
-
-    #install-button {
-      display: none;
-      padding: 10px 20px;
-      font-size: 1rem;
-      background-color: #1976d2;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    #install-button:disabled {
-      background-color: #aaa;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
   <h1>Bienvenido a InstallPWA</h1>
   <p>Instala esta app en tu dispositivo para una mejor experiencia.</p>
   <button id="install-button">📲 Instalar App</button>
+
+  <div id="ios-install-modal" style="display: none;">
+    <div class="modal-content">
+      <p>📲 Para instalar esta app:</p>
+      <ol>
+        <li>Toca el botón <strong>compartir</strong> <span class="share-icon">🔗</span> en Safari o Chrome.</li>
+        <li>Selecciona <strong>“Agregar a pantalla de inicio”</strong>.</li>
+      </ol>
+      <button id="close-ios-modal">Entendido</button>
+    </div>
+  </div>
 
   <script>
     let deferredPrompt;
@@ -65,6 +56,23 @@
         document.getElementById('install-button').disabled = true;
       }
     });
+
+    function isIos() {
+      return /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
+    }
+
+    function isInStandaloneMode() {
+      return ('standalone' in window.navigator) && window.navigator.standalone;
+    }
+
+    if (isIos() && !isInStandaloneMode()) {
+      document.getElementById('ios-install-modal').style.display = 'flex';
+    }
+
+    document.getElementById('close-ios-modal').addEventListener('click', () => {
+      document.getElementById('ios-install-modal').style.display = 'none';
+    });
   </script>
 </body>
+
 </html>
