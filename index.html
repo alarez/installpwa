@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InstallPWA</title>
+
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#1976d2" />
+  <link rel="icon" href="icon-192.png" />
+
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    #install-button {
+      display: none;
+      padding: 10px 20px;
+      font-size: 1rem;
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #install-button:disabled {
+      background-color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <h1>Bienvenido a InstallPWA</h1>
+  <p>Instala esta app en tu dispositivo para una mejor experiencia.</p>
+  <button id="install-button">📲 Instalar App</button>
+
+  <script>
+    let deferredPrompt;
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('✅ Service Worker registrado'))
+        .catch((err) => console.error('❌ Error al registrar SW', err));
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('install-button').style.display = 'inline-block';
+    });
+
+    document.getElementById('install-button').addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          console.log('✅ Usuario aceptó la instalación');
+        } else {
+          console.log('🛑 Usuario canceló la instalación');
+        }
+        deferredPrompt = null;
+        document.getElementById('install-button').disabled = true;
+      }
+    });
+  </script>
+</body>
+</html>
